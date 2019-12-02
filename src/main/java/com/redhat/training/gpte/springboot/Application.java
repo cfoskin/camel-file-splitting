@@ -43,6 +43,11 @@ public class Application  extends RouteBuilder {
         public void configure() throws Exception {
     		 BindyCsvDataFormat bindy = new BindyCsvDataFormat(Customer.class);
              bindy.setLocale("default");
+             
+    		onException(IllegalArgumentException.class)
+            .to("log:fail")
+            .to("file:src/data/error?fileName=csv-record-${date:now:yyyyMMdd}.txt")
+            .handled(true);
     		
             from("file:src/data/inbox?fileName=customers.csv&noop=true")
               .split().tokenize("\n")
