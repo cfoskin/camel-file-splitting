@@ -53,7 +53,11 @@ public class Application  extends RouteBuilder {
               .split().tokenize("\n")
               .to("log:tokenized")
               .unmarshal(bindy)
-              .to("log:Unmarshalled");   
+              .to("log:Unmarshalled")
+              .to("dozer:Account?mappingFile=transformation.xml&sourceModel=org.acme.Customer&targetModel=org.globex.Account")
+              .marshal().json(JsonLibrary.Jackson)
+              .to("log:Marshalled")
+              .to("file:src/data/outbox?fileName=account-${property.CamelSplitIndex}.json");   
         }
 
 
